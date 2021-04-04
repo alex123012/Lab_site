@@ -26,7 +26,7 @@ SECRET_KEY = 'rn)f@n08h69j6wv5)q!z(rwmbo)n6g3v=)ha6%051ykkd62*rx'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [ '*' ]
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'ChromoGraph.apps.ChromographConfig',
     'home.apps.HomeConfig',
     'exelchange.apps.ExelchangeConfig',
+    'LKalign.apps.LkalignConfig',
 ]
 
 MIDDLEWARE = [

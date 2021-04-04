@@ -30,6 +30,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('chromograph/', include('ChromoGraph.urls'), name='chromograph'),
     path('exelchange/', include('exelchange.urls'), name='exelchange'),
+    path('lkalign/', include('LKalign.urls'), name='lkalign'),
     path('accounts/', include('django.contrib.auth.urls')),
     url(r'^media/(?P<path>.*)$', serve,
         {'document_root': root, 'show_indexes': True},
