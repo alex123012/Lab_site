@@ -10,7 +10,7 @@ import os
 
 app_name = 'lkalign'
 urlpatterns = [
-    # path('', views.FileFieldView.as_view(), name='lkalign'),
+    path('', views.FileFieldView.as_view(), name='lkalign'),
     # url(r'^aligns/(?P<path>.*)$', serve,
     #     {'document_root': graph, 'show_indexes': True},
     #     name='graph'
