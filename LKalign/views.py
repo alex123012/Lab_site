@@ -12,16 +12,13 @@ class FileFieldView(FormView):
     template_name = os.path.join("LKalign", "index.html")  # Basic template
 
     def get(self, request, **kwargs):
+        filename = check_status(request)  # Import file name if exists (after POST)
         form = self.form_class()
-        check(request)
-        path = os.path.join('LKalign', 'static', 'media')
-        path = os.path.join(path, request.COOKIES.get('sessionid', ), 'graph.png')
+        if filename:
+            return render(request, os.path.join("LKalign", "index.html"),
+                          {'form': form, 'filename': filename})
 
-        cook = os.path.join(request.COOKIES['sessionid'], 'graph.png') if os.path.exists(path) else None
-
-        return render(request, os.path.join("LKalign", "index.html"), {'form': form,
-                                                                       'img': cook,
-                                                                       'result': request.session.get('result', '')},)
+        return render(request, os.path.join("LKalign", "index.html"), {'form': form})
 
     def post(self, request, *args, **kwargs):
         form_class = self.get_form_class()
@@ -30,35 +27,49 @@ class FileFieldView(FormView):
         resp = request.POST
         if form.is_valid():
             matrix = os.path.join('LKalign', 'static', 'matrix.txt')
-            for file in files:
+            names = resp['title'].split()
+            for file, name in zip(files, names):
                 # x = 'Only_blast/apl_lynx2_blast.fasta'
-                filename = os.path.join(request.COOKIES['sessionid'], f"{str(resp['title'])}.aln")
+                filename = os.path.join(request.COOKIES['sessionid'], f'{name}.aln')
                 filename = os.path.join('LKalign', 'static', 'media', filename)
-                out = os.path.join('static', 'media', request.COOKIES.get('sessionid', ), filename)
-                cmd = ClustalwCommandline('clustalw', infile=file, gapext=0.5, align=True,
+                with open(filename, 'w') as f:
+                    tmp = ''
+                    for chunk in file.chunks():
+                        tmp += chunk.decode()
+                    f.write(tmp)
+
+                cmd = ClustalwCommandline('clustalw', infile=filename, gapext=0.5, align=True,
                                           gapopen=10, matrix=matrix,
                                           pwmatrix=matrix,
-                                          type='PROTEIN', outfile=out, quiet=True)
+                                          type='PROTEIN', outfile=filename, quiet=True)
                 cmd()
-                alignment = AlignIO.read(out, "clustal")
+                alignment = AlignIO.read(filename, "clustal")
                 alignment = ''.join([str(i.id) + '\t' + str(i.seq) + '\n' for i in alignment])
-                # os.remove('align.aln')
+
                 with open(filename, 'w') as f:
                     f.write(alignment)
+                os.remove(filename.replace('aln', 'dnd'))  # remove tree
+                filename = os.path.join(request.COOKIES['sessionid'], f'{name}.aln')
+                list_names = request.session.get('filenames', )
+                request.session['filenames'] = (list_names + [filename]) if list_names else [filename]
+
         return redirect(request.path)
 
 
-def check(request):
-    if not request.COOKIES.get('sessionid', '') or not request.COOKIES['sessionid']:  # set session cookie
+def check_status(request):
+
+    if not request.COOKIES.get('sessionid', ) or not request.COOKIES['sessionid']:  # set session cookie
         request.session.create()
         request.COOKIES['sessionid'] = request.session.session_key
 
-    path = os.path.join('LKalign', 'static')
-    if not os.path.exists(path):
+    path = os.path.join('LKalign', 'static', 'media')
+    if not os.path.exists(path):  # Create new folders for storing graphs
         os.mkdir(path)
-    path = os.path.join(path, 'media')
-    if not os.path.exists(path):
-        os.mkdir(path)
+        request.session['filenames'] = []
+
     path = os.path.join(path, request.COOKIES.get('sessionid', ))
     if not os.path.exists(path):
         os.mkdir(path)
+        request.session['filenames'] = []
+
+    return request.session['filenames']

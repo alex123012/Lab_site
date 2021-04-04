@@ -23,7 +23,6 @@ from django.views.generic import TemplateView
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 root = os.path.join(BASE_DIR, 'ChromoGraph', 'static', 'media')
 root_2 = os.path.join(BASE_DIR, 'LKalign', 'static', 'media')
-# graph = os.path.join(BASE_DIR, 'exelchange/static/media')
 INDEX_ROOT = os.path.join(BASE_DIR, 'index')
 
 urlpatterns = [
@@ -31,7 +30,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('chromograph/', include('ChromoGraph.urls'), name='chromograph'),
     path('exelchange/', include('exelchange.urls'), name='exelchange'),
-    path('exelchange/', include('lkalign.urls'), name='lkalign'),
+    path('lkalign/', include('LKalign.urls'), name='lkalign'),
     path('accounts/', include('django.contrib.auth.urls')),
     url(r'^media/(?P<path>.*)$', serve,
         {'document_root': root, 'show_indexes': True},

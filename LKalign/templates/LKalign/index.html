@@ -1,0 +1,34 @@
+{% extends 'base_bootstrap.html'%}
+
+{% block content %}
+     <div style="width:21em; text-align: center; border: 5px blue solid; padding: 5px; margin: 2em 2em 0;">Usage</div>
+     <div style="width:21em; border: 5px blue solid; padding: 5px; margin: -5px 2em 1.5em;">
+{#         <ul>#}
+{#             <li>Export chromatogram from Chromeleon to .txt file</li>#}
+{#             <li>Upload it to form below</li>#}
+{#             <li>Enter valid info about exporting graph below</li>#}
+{#             <li>Download image/archive</li>#}
+{#             <li>If you upload several files - zip archive would be created</li>#}
+{#             <li>If you upload single file - you can download image by link or inspect it on site</li>#}
+{#         </ul>#}
+     </div>
+    <div id="formes">
+        <form method="post" enctype="multipart/form-data"
+        style="width:21em; border: 5px black solid; padding: 5px; margin: 1.5em 2em;">
+        {% csrf_token %}
+            <p>
+                {{ form.as_p }}
+                <input type="submit" value="Upload">
+            </p>
+        </form>
+    </div>
+    {% if filename %}
+         <div id="content">
+                 <ul style="position: absolute; top: 9%; right: 30%;">
+                     {% for n in filename %}
+                         <li><a href={% url 'align_path' n %}>{{ n }}</a></li>
+                     {% endfor %}
+                 </ul>
+         </div>
+    {% endif %}
+{% endblock %}
