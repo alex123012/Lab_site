@@ -1,0 +1,46 @@
+{% extends 'base_bootstrap.html'%}
+
+{#{%  block head %}#}
+{#    Cache-Control: no-cache#}
+{#{% endblock %}#}
+
+{% block content %}
+    <div style="width:21em; text-align: center; border: 5px blue solid; padding: 5px; margin: 2em 2em 0;">Usage</div>
+     <div style="width:21em; border: 5px blue solid; padding: 5px; margin: -5px 2em 1.5em;">
+         <ul>
+             <li>Write calibration results on piece of paper</li>
+             <li>Enter them divided by spaces into 'X' and 'Y' forms</li>
+             <li>Add desired absorbance to calculate concentration</li>
+             <li>Download image by link or inspect it on site</li>
+             <li>By green dots designated concentration-absorbance correlation</li>
+         </ul>
+     </div>
+    <div id="formes">
+        <form method="post"
+        style="width:21em; border: 5px black solid; padding: 5px; margin: 1.5em 2em;">
+        {% csrf_token %}
+            <p>
+                {{ form.as_p }}
+                <input type="submit" value="Calculate">
+            </p>
+        </form>
+    </div>
+    {% if result %}
+        <div style="width:21em; border: 5px blue solid; padding: 5px; margin: -5px 2em 1.5em;">
+            <ul>
+                {% for i, j in result %}
+                    <li>Concentration equals <strong>{{ i }}</strong> at absorbance {{ j }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+    <div>
+    {% if img %}
+        {% load static %}
+        <img src={% url 'exelchange:graph' img %} alt="Image" height="666" width="1000"
+             style="position: absolute; top: 6%; right: 1em;">
+        <p><a href={% url 'exelchange:graph' img %} download style="position:absolute; bottom: 6.5%; left: 39%">link to image</a></p>
+    {% endif %}
+    </div>
+{% endblock %}
