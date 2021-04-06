@@ -29,20 +29,21 @@ class FileFieldView(FormView):
             matrix = os.path.join('LKalign', 'static', 'matrix.txt')
             names = resp['title'].split()
             for file, name in zip(files, names):
-                # x = 'Only_blast/apl_lynx2_blast.fasta'
-                filename = os.path.join(request.COOKIES['sessionid'], f'{name}.aln')
-                filename = os.path.join('LKalign', 'static', 'media', filename)
-                with open(filename, 'w') as f:
-                    tmp = ''
-                    for chunk in file.chunks():
-                        tmp += chunk.decode()
-                    f.write(tmp)
-
-                cmd = ClustalwCommandline('clustalw', infile=filename, gapext=0.5, align=True,
-                                          gapopen=10, matrix=matrix,
-                                          pwmatrix=matrix,
-                                          type='PROTEIN', outfile=filename, quiet=True)
                 try:
+
+                    # x = 'Only_blast/apl_lynx2_blast.fasta'
+                    filename = os.path.join(request.COOKIES['sessionid'], f'{name}.aln')
+                    filename = os.path.join('LKalign', 'static', 'media', filename)
+                    with open(filename, 'w') as f:
+                        tmp = ''
+                        for chunk in file.chunks():
+                            tmp += chunk.decode()
+                        f.write(tmp)
+
+                    cmd = ClustalwCommandline('clustalw', infile=filename, gapext=0.5, align=True,
+                                              gapopen=10, matrix=matrix,
+                                              pwmatrix=matrix,
+                                              type='PROTEIN', outfile=filename, quiet=True)
                     cmd()
                     alignment = AlignIO.read(filename, "clustal")
                     alignment = ''.join([str(i.id) + '\t' + str(i.seq) + '\n' for i in alignment])
