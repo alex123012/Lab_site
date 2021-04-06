@@ -46,8 +46,8 @@ class FileFieldView(FormView):
                     cmd()
                     alignment = AlignIO.read(filename, "clustal")
                     alignment = ''.join([str(i.id) + '\t' + str(i.seq) + '\n' for i in alignment])
-                except:
-                    redirect(request.path)
+                except Exception:
+                    return redirect(request.path)
 
                 with open(filename, 'w') as f:
                     f.write(alignment)
