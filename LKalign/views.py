@@ -46,7 +46,8 @@ class FileFieldView(FormView):
                                               type='PROTEIN', outfile=filename, quiet=True)
                     cmd()
                     alignment = AlignIO.read(filename, "clustal")
-                    alignment = ''.join([str(i.id) + '\t' + str(i.seq) + '\n' for i in alignment])
+                    max_len = max([len(i.id) + 1 for i in alignment])
+                    alignment = ''.join([str(i.id) + ' ' * (max_len - len(i.id)) + str(i.seq) + '\n' for i in alignment])
                 except Exception:
                     return redirect(request.path)
 
