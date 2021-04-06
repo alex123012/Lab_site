@@ -42,7 +42,10 @@ class FileFieldView(FormView):
                                           gapopen=10, matrix=matrix,
                                           pwmatrix=matrix,
                                           type='PROTEIN', outfile=filename, quiet=True)
-                cmd()
+                try:
+                    cmd()
+                except:
+                    redirect(request.path)
                 alignment = AlignIO.read(filename, "clustal")
                 alignment = ''.join([str(i.id) + '\t' + str(i.seq) + '\n' for i in alignment])
 
