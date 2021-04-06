@@ -44,10 +44,10 @@ class FileFieldView(FormView):
                                           type='PROTEIN', outfile=filename, quiet=True)
                 try:
                     cmd()
+                    alignment = AlignIO.read(filename, "clustal")
+                    alignment = ''.join([str(i.id) + '\t' + str(i.seq) + '\n' for i in alignment])
                 except:
                     redirect(request.path)
-                alignment = AlignIO.read(filename, "clustal")
-                alignment = ''.join([str(i.id) + '\t' + str(i.seq) + '\n' for i in alignment])
 
                 with open(filename, 'w') as f:
                     f.write(alignment)
