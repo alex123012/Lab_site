@@ -34,7 +34,9 @@ class FileFieldView(FormView):
                 try:
 
                     filename = os.path.join(request.COOKIES['sessionid'], f'{name}.aln')
+                    filename_raw = filename.split('.')[0] + '_raw.aln'
                     filename = os.path.join('LKalign', 'static', 'media', filename)
+                    filename_raw = os.path.join('LKalign', 'static', 'media', filename_raw)
                     with open(filename, 'w') as f:
                         tmp = ''
                         for chunk in file.chunks():
@@ -43,11 +45,11 @@ class FileFieldView(FormView):
 
                     cmd = ClustalwCommandline('clustalw', infile=filename, gapext=0.5, align=True,
                                               gapopen=10, matrix=matrix, pwmatrix=matrix,
-                                              type='PROTEIN', outfile=filename, quiet=True,
+                                              type='PROTEIN', outfile=filename_raw, quiet=True,
                                               terminalgap=10
                                               )
                     cmd()
-                    alignment = AlignIO.read(filename, "clustal")
+                    alignment = AlignIO.read(filename_raw, "clustal")
                     reference = [(str(i.seq), i.id) for i in alignment if sim_search in i.id][0]
                     max_len = max([len(i.id) + 1 for i in alignment])
                     if sim_search:
@@ -64,8 +66,10 @@ class FileFieldView(FormView):
                     f.write(alignment)
                 os.remove(filename.replace('aln', 'dnd'))  # remove tree
                 filename = os.path.join(request.COOKIES['sessionid'], f'{name}.aln')
+                filename_raw = os.path.join(request.COOKIES['sessionid'], f'{name}_raw.aln')
                 list_names = request.session.get('filenames', )
-                request.session['filenames'] = (list_names + [filename]) if list_names else [filename]
+                litr = [filename, filename_raw]
+                request.session['filenames'] = (list_names + litr) if list_names else litr
 
         return redirect(request.path)
 
