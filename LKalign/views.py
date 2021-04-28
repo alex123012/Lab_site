@@ -50,9 +50,13 @@ class FileFieldView(FormView):
                     alignment = AlignIO.read(filename, "clustal")
                     reference = [(str(i.seq), i.id) for i in alignment if sim_search in i.id][0]
                     max_len = max([len(i.id) + 1 for i in alignment])
-                    alignment = ''.join([str(i.id) + ' ' * (
-                            max_len - len(i.id)) + str(i.seq) + similarity(
+                    if sim_search:
+                        alignment = ''.join([str(i.id) + ' ' * (
+                                max_len - len(i.id)) + str(i.seq) + similarity(
                         i.seq, reference[0], i.id, reference[1]) + '\n' for i in alignment])
+                    else:
+                        alignment = ''.join([str(i.id) + ' ' * (
+                                max_len - len(i.id)) + str(i.seq) + '\n' for i in alignment])
                 except Exception:
                     return redirect(request.path)
 
