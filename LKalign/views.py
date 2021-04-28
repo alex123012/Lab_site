@@ -29,7 +29,7 @@ class FileFieldView(FormView):
         if form.is_valid():
             matrix = os.path.join('LKalign', 'static', 'matrix.txt')
             names = resp['title'].split()
-            proteins = request.POST['similarity'].split()
+            proteins = resp['similarity'].split()
             for file, name, sim_search in zip(files, names, proteins):
                 try:
 
